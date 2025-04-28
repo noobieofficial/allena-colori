@@ -3,322 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="caa.png" type="image/png" />
-  <title>Visualizzatore CAA</title>
+  <title>Esercizio Colori</title>
   <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f6fb;
-  color: #333;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  max-width: 1000px;
-  width: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.left {
-  flex: 1;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.left h1 {
-  font-size: 32px;
-  margin-bottom: 10px;
-  color: #007bff;
-}
-
-.left p {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.left input {
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.left input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.left button {
-  padding: 14px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.left button:hover {
-  background-color: #0056b3;
-}
-
-.right {
-  flex: 1;
-  background-color: #f0f4ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-#image-container {
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-#image-container img {
-  max-width: 120px;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-#image-container p {
-  margin-top: 8px;
-  font-size: 16px;
-  color: #444;
-}
-
-.symbol-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#print-button {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+      padding: 1rem;
+    }
+    .menu, .countdown, .color-screen, .final-message {
       display: none;
-      margin-top: 20px;
-      padding: 12px 20px;
-      font-size: 16px;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .menu.active, .countdown.active, .color-screen.active, .final-message.active {
+      display: flex;
+    }
+    button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
       border: none;
-      border-radius: 10px;
-      background-color: #007bff;
+      border-radius: 0.5rem;
+      background-color: #444;
       color: white;
       cursor: pointer;
     }
-
-    #print-button:hover {
-      background-color: #0056b3;
-    }
-
-
-/* MOBILE */
-@media (max-width: 768px) {
-      body {
-        padding: 0;
-      }
-
-      .container {
-        flex-direction: column;
-        border-radius: 0;
-        box-shadow: none;
-        width: 100%;
-      }
-
-      .left {
-        padding: 24px 20px;
-        background: #ffffff;
-      }
-
-      .left h1 {
-        font-size: 26px;
-        text-align: center;
-      }
-
-      .left p {
-        font-size: 16px;
-        text-align: center;
-      }
-
-      .left input {
-        padding: 12px;
-        font-size: 16px;
-      }
-
-      .left button {
-        padding: 12px;
-        width: 100%;
-      }
-
-      .right {
-        padding: 20px 16px 40px;
-      }
-
-      #image-container img {
-        max-width: 100px;
-      }
-
-      #image-container p {
-        font-size: 14px;
-      }
-
-      #print-button {
-        width: 100%;
-      }
-    }
-
-    /* STAMPA */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-
-      #image-container, #image-container * {
-        visibility: visible;
-      }
-
-      #image-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 20px;
-      }
+    .color-screen {
+      width: 100vw;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
     }
   </style>
 </head>
 <body>
+  <audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
   <div class="container">
-    <div class="left">
-      <h1>Visualizzatore CAA</h1>
-      <p>Inserisci una frase (in italiano):</p>
-      <input type="text" id="wordInput" placeholder="Es. il cane è contento">
-      <button onclick="fetchSymbols()">Mostra simboli</button>
+    <div class="menu active">
+      <h1>Scegli una categoria</h1>
+      <button onclick="startExercise(1)">Categoria 1</button>
+      <button onclick="startExercise(2)">Categoria 2</button>
+      <button onclick="startDoubleColorExercise()">Categoria 3</button>
+      <button onclick="startExercise(4)">Categoria 4</button>
+      <button onclick="startDoubleColorExercise()">Categoria 5</button>
     </div>
-    <div class="right">
-      <div id="image-container">
-        <p>L'immagine apparirà qui</p>
-      </div>
-      <button id="print-button" style="display: none;">Stampa simboli</button>
+
+    <div class="countdown">
+      <h1>Inizio in <span id="count">20</span> secondi...</h1>
+    </div>
+
+    <div class="color-screen">
+      <div id="colorLabel"></div>
+    </div>
+
+    <div class="final-message">
+      <h1>Esercizio completato!</h1>
+      <button onclick="goToMenu()">Torna al menu</button>
     </div>
   </div>
 
   <script>
-    const stopwords = ["il", "lo", "la", "i", "gli", "le"];
-  
-    const verbMap = {
-      "sono": "essere", "sei": "essere", "è": "essere", "siamo": "essere", "siete": "essere", "erano": "essere",
-      "ero": "essere", "eri": "essere", "era": "essere", "eravamo": "essere", "eravate": "essere",
-      "sarò": "essere", "sarai": "essere", "sarà": "essere", "saremo": "essere", "sarete": "essere", "saranno": "essere",
-      "fui": "essere", "fosti": "essere", "fu": "essere", "fummo": "essere", "foste": "essere", "furono": "essere",
-      "ho": "avere", "hai": "avere", "ha": "avere", "abbiamo": "avere", "avete": "avere", "hanno": "avere",
-      "avevo": "avere", "avevi": "avere", "aveva": "avere", "avevamo": "avere", "avevate": "avere", "avevano": "avere",
-      "avrò": "avere", "avrai": "avere", "avrà": "avere", "avremo": "avere", "avrete": "avere", "avranno": "avere",
-      "ebbi": "avere", "avesti": "avere", "ebbe": "avere", "avemmo": "avere", "aveste": "avere", "ebbero": "avere"
-    };
-  
-    function normalizeWord(word) {
-      if (stopwords.includes(word)) return null;
-      if (verbMap[word]) return verbMap[word];
-  
-      if (word.match(/ato$|uto$|ito$/)) {
-        return word.replace(/ato$|uto$|ito$/, "are");
-      }
-  
-      if (word.match(/(erò|erai|erà|eremo|erete|eranno)$/)) {
-        return word.replace(/erò|erai|erà|eremo|erete|eranno/, "are");
-      }
-  
-      if (word.match(/(irò|irai|irà|iremo|irete|iranno)$/)) {
-        return word.replace(/irò|irai|irà|iremo|irete|iranno/, "ire");
-      }
-  
-      const futureIrregulars = {
-        "berrò": "bere", "berrai": "bere", "berrà": "bere", "berremo": "bere", "berrete": "bere", "berranno": "bere",
-        "andrò": "andare", "andrai": "andare", "andrà": "andare", "faremo": "fare", "farò": "fare", "farai": "fare",
-        "darò": "dare", "dirò": "dire", "verrò": "venire", "vedrò": "vedere", "potrò": "potere",
-        "vorrò": "volere", "dovrò": "dovere", "sarò": "essere", "avrò": "avere"
-      };
-  
-      if (futureIrregulars[word]) return futureIrregulars[word];
-      return word;
+    const colors = ['green', 'red', 'blue', 'yellow'];
+    let colorChangeInterval;
+    const beepSound = document.getElementById('beep');
+
+    function startExercise(category) {
+      document.querySelector('.menu').classList.remove('active');
+      document.querySelector('.countdown').classList.add('active');
+
+      let countdown = 20;
+      const countDisplay = document.getElementById('count');
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countDisplay.textContent = countdown;
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          startColorChanges();
+        }
+      }, 1000);
     }
-  
-    async function fetchSymbols() {
-      const input = document.getElementById("wordInput").value.toLowerCase().trim();
-      const container = document.getElementById("image-container");
-      const printButton = document.getElementById("print-button");
-  
-      container.innerHTML = "<p>Caricamento...</p>";
-      printButton.style.display = "none";
-  
-      const rawTokens = input.replace(/[.,;!?]/g, '').split(/\s+/);
-      const tokens = rawTokens.map(normalizeWord).filter(Boolean);
-  
-      if (tokens.length === 0) {
-        container.innerHTML = "<p>Nessuna parola utile trovata.</p>";
-        return;
-      }
-  
-      container.innerHTML = "";
-      let completed = 0;
-  
-      for (const word of tokens) {
-        const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.arasaac.org/api/pictograms/it/search/${word}`)}`;
-  
-        try {
-          const response = await fetch(url);
-          const data = await response.json();
-          const parsed = JSON.parse(data.contents);
-  
-          const symbolBlock = document.createElement("div");
-          symbolBlock.className = "symbol-block";
-  
-          if (parsed.length > 0) {
-            const pictogramId = parsed[0]._id;
-            const imageUrl = `https://static.arasaac.org/pictograms/${pictogramId}/${pictogramId}_500.png`;
-            symbolBlock.innerHTML = `<img src="${imageUrl}" alt="${word}"><p>${word}</p>`;
-          } else {
-            symbolBlock.innerHTML = `<p>Nessun simbolo per "${word}"</p>`;
-          }
-  
-          container.appendChild(symbolBlock);
-        } catch (error) {
-          console.error(error);
-          container.innerHTML += `<p>Errore nel caricamento per "${word}".</p>`;
+
+    function startColorChanges() {
+      document.querySelector('.countdown').classList.remove('active');
+      document.querySelector('.color-screen').classList.add('active');
+
+      let changes = 0;
+      changeColor();
+
+      colorChangeInterval = setInterval(() => {
+        changes++;
+        if (changes >= 20) {
+          clearInterval(colorChangeInterval);
+          showFinalMessage();
         }
-  
-        completed++;
-        if (completed === tokens.length) {
-          printButton.style.display = "block";
-  
-          // AGGIUNTA: stampa automatica al termine
-          printButton.onclick = () => window.print();
+        changeColor();
+      }, 5000);
+    }
+
+    function startDoubleColorExercise() {
+      document.querySelector('.menu').classList.remove('active');
+      document.querySelector('.countdown').classList.add('active');
+
+      let countdown = 20;
+      const countDisplay = document.getElementById('count');
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countDisplay.textContent = countdown;
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          startDoubleColorChanges();
         }
+      }, 1000);
+    }
+
+    function startDoubleColorChanges() {
+      document.querySelector('.countdown').classList.remove('active');
+      document.querySelector('.color-screen').classList.add('active');
+
+      let changes = 0;
+      changeDoubleColor();
+
+      colorChangeInterval = setInterval(() => {
+        changes++;
+        if (changes >= 20) {
+          clearInterval(colorChangeInterval);
+          showFinalMessage();
+        }
+        changeDoubleColor();
+      }, 5000);
+    }
+
+    function changeColor() {
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const screen = document.querySelector('.color-screen');
+      screen.style.backgroundColor = randomColor;
+      document.getElementById('colorLabel').textContent = randomColor.toUpperCase();
+      beepSound.play();
+    }
+
+    function changeDoubleColor() {
+      let color1 = colors[Math.floor(Math.random() * colors.length)];
+      let color2 = colors[Math.floor(Math.random() * colors.length)];
+      while (color2 === color1) {
+        color2 = colors[Math.floor(Math.random() * colors.length)];
       }
+      const screen = document.querySelector('.color-screen');
+      screen.style.background = `linear-gradient(90deg, ${color1} 50%, ${color2} 50%)`;
+      document.getElementById('colorLabel').textContent = `${color1.toUpperCase()} / ${color2.toUpperCase()}`;
+      beepSound.play();
+    }
+
+    function showFinalMessage() {
+      document.querySelector('.color-screen').classList.remove('active');
+      document.querySelector('.final-message').classList.add('active');
+    }
+
+    function goToMenu() {
+      document.querySelector('.final-message').classList.remove('active');
+      document.querySelector('.menu').classList.add('active');
     }
   </script>
-  
 </body>
 </html>
